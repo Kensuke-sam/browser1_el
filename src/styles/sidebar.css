@@ -1,0 +1,470 @@
+/* ============================================
+   Zen Browser - Sidebar Styles
+   垂直タブ・コンパクトモード
+   ============================================ */
+
+/* サイドバー */
+.sidebar {
+  width: var(--sidebar-width);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.34) 100%);
+  border-right: 1px solid var(--border-color);
+  transition: width var(--transition-normal), 
+              transform var(--transition-normal),
+              opacity var(--transition-fast);
+  position: relative;
+  z-index: 100;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur))
+    saturate(var(--glass-saturation));
+}
+
+/* コンパクトモード */
+.sidebar.compact {
+  width: var(--sidebar-collapsed-width);
+}
+
+.sidebar.compact .tabs-container {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar.compact .new-tab-btn span,
+.sidebar.compact .spaces-container .space-icon + span {
+  display: none;
+}
+
+.sidebar.compact:hover {
+  width: var(--sidebar-width);
+}
+
+.sidebar.compact:hover .tabs-container {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 収納状態 */
+.sidebar.hidden {
+  width: 0;
+  min-width: 0;
+  border-right: 0;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sidebar-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 110;
+}
+
+.sidebar-resize-handle::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 50%;
+  width: 2px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.sidebar:hover .sidebar-resize-handle::before,
+.sidebar-resize-handle:hover::before,
+body.sidebar-resizing .sidebar-resize-handle::before {
+  opacity: 1;
+}
+
+.sidebar.compact .sidebar-resize-handle,
+.sidebar.hidden .sidebar-resize-handle {
+  display: none;
+}
+
+/* Spacesコンテナ */
+.spaces-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.spaces-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.space {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--surface-stroke);
+  box-shadow: inset 0 1px 0 var(--surface-highlight), var(--shadow-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.space:hover {
+  background: rgba(255, 255, 255, 0.72);
+  transform: scale(1.05);
+}
+
+.space.active {
+  background: linear-gradient(140deg, rgba(116, 209, 138, 0.95), rgba(77, 178, 106, 0.9));
+  box-shadow: 0 10px 20px rgba(45, 120, 70, 0.25);
+  color: #0f2b17;
+}
+
+.space.active::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  width: 3px;
+  height: 20px;
+  background: var(--accent-primary);
+  border-radius: var(--radius-full);
+}
+
+.space-icon {
+  font-size: 16px;
+}
+
+.add-space-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.add-space-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: var(--surface-stroke);
+  color: var(--text-primary);
+}
+
+/* タブコンテナ */
+.tabs-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+  transition: opacity var(--transition-fast);
+}
+
+.tabs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tabs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tabs-section--other {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-color);
+  display: none;
+}
+
+.tabs-section--other.is-visible {
+  display: flex;
+}
+
+.tabs-section-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+/* 個別タブ */
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  min-height: var(--tab-height);
+  border: 1px solid transparent;
+}
+
+.tab.other-space {
+  opacity: 0.72;
+}
+
+.tab.other-space:hover {
+  opacity: 1;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: var(--surface-stroke);
+}
+
+.tab.active {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 0 var(--surface-highlight), var(--shadow-sm);
+}
+
+.tab.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: var(--accent-primary);
+  border-radius: var(--radius-full);
+}
+
+.tab-favicon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  object-fit: contain;
+}
+
+.tab-favicon.loading {
+  animation: pulse 1s infinite;
+}
+
+.tab-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tab-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-url {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-close {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  opacity: 0;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.tab:hover .tab-close {
+  opacity: 1;
+}
+
+.tab-close:hover {
+  background: var(--error);
+  color: white;
+}
+
+/* 新規タブボタン */
+.new-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid var(--surface-stroke);
+  box-shadow: inset 0 1px 0 var(--surface-highlight);
+}
+
+.new-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--text-primary);
+}
+
+.new-tab-btn svg {
+  flex-shrink: 0;
+}
+
+/* サイドバー下部のコントロール */
+.sidebar-controls {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.sidebar-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.sidebar-btn:hover {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: var(--surface-stroke);
+  color: var(--text-primary);
+}
+
+body.sidebar-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+/* ドラッグインジケーター */
+.tab.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+.tab.drag-over {
+  border-top: 2px solid var(--accent-primary);
+}
+
+/* Liquid Theme Overrides */
+:root[data-variant="liquid"] .sidebar {
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-lg);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(50px) saturate(200%);
+}
+
+:root[data-variant="liquid"] .space {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+:root[data-variant="liquid"] .space:hover {
+  background: rgba(255, 255, 255, 0.45);
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-variant="liquid"] .tab.active {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px rgba(0,30,60,0.05); 
+}
+
+/* Classic theme overrides */
+:root[data-theme='classic'] .sidebar {
+  background: var(--bg-primary);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:root[data-theme='classic'] .space {
+  background: var(--bg-secondary);
+  border: none;
+  box-shadow: none;
+}
+
+:root[data-theme='classic'] .space:hover {
+  background: var(--bg-hover);
+}
+
+:root[data-theme='classic'] .space.active {
+  background: var(--accent-primary);
+  box-shadow: 0 0 20px var(--accent-glow);
+  color: var(--text-primary);
+}
+
+:root[data-theme='classic'] .add-space-btn {
+  border: none;
+}
+
+:root[data-theme='classic'] .add-space-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+:root[data-theme='classic'] .tab {
+  border: none;
+}
+
+:root[data-theme='classic'] .tab:hover {
+  background: var(--bg-hover);
+  border-color: transparent;
+}
+
+:root[data-theme='classic'] .tab.active {
+  background: var(--bg-tertiary);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+:root[data-theme='classic'] .new-tab-btn {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+:root[data-theme='classic'] .new-tab-btn:hover {
+  background: var(--bg-hover);
+}
+
+:root[data-theme='classic'] .sidebar-btn {
+  border: none;
+  box-shadow: none;
+}
+
+:root[data-theme='classic'] .sidebar-btn:hover {
+  background: var(--bg-hover);
+}

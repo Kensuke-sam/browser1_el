@@ -1,0 +1,27 @@
+{
+  "name": "zen-browser",
+  "version": "1.0.0",
+  "description": "A Zen-style Chromium-based browser built with Electron",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "build": "tsc && npm run bundle-renderer && npm run copy-resources",
+    "bundle-renderer": "esbuild src/renderer/renderer.ts --bundle --outfile=dist/renderer/renderer.js --platform=browser --target=chrome120",
+    "copy-resources": "cp -r src/renderer/index.html dist/renderer/ && cp -r src/styles dist/",
+    "start": "npm run build && npx electron .",
+    "dev": "npm run build && npx electron ."
+  },
+  "keywords": [
+    "browser",
+    "electron",
+    "zen",
+    "chromium"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "electron": "^28.0.0",
+    "esbuild": "^0.27.2",
+    "typescript": "^5.3.0"
+  }
+}

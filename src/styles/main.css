@@ -1,0 +1,530 @@
+/* ============================================
+   Zen Browser - Main Styles
+   ミニマリストデザイン・ダークモード
+   ============================================ */
+
+/* CSS変数 - カラーパレット */
+/* CSS変数 - カラーパレット */
+:root {
+  /* Common Liquid Settings */
+  color-scheme: light;
+  --glass-blur: 24px;
+  --glass-saturation: 180%;
+
+  /* Dimensions */
+  --sidebar-width: 280px;
+  --sidebar-min-width: 200px;
+  --sidebar-max-width: 420px;
+  --sidebar-collapsed-width: 48px;
+  --split-pane-min-width: 220px;
+  --toolbar-height: 48px; /* Slightly taller for modern feel */
+  --tab-height: 38px;
+  --frame-padding: 12px;
+
+  /* Transitions */
+  --transition-fast: 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-normal: 350ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Shadows - Smooth & Deep */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.06);
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+}
+
+/* =========================================
+   Theme Variants
+   ========================================= */
+
+/* Default / Nature (Green - Original Improved) */
+:root,
+:root[data-variant="nature"] {
+  --bg-primary: rgba(255, 255, 255, 0.45);
+  --bg-secondary: rgba(255, 255, 255, 0.35);
+  --bg-tertiary: rgba(255, 255, 255, 0.65);
+  --bg-hover: rgba(255, 255, 255, 0.55);
+  --bg-active: rgba(255, 255, 255, 0.85);
+
+  --text-primary: #1a2a1a;
+  --text-secondary: #3b563b;
+  --text-muted: #6b8570;
+
+  --accent-primary: #4db26a;
+  --accent-secondary: #74d18a;
+  --accent-glow: rgba(77, 178, 106, 0.4);
+
+  --border-color: rgba(255, 255, 255, 0.4);
+  --border-hover: rgba(255, 255, 255, 0.6);
+
+  --surface-highlight: rgba(255, 255, 255, 0.8);
+  --surface-shadow: rgba(26, 62, 34, 0.12);
+  --surface-stroke: rgba(255, 255, 255, 0.6);
+
+  --success: #2fbf71;
+  --warning: #e0a84a;
+  --error: #e06f6f;
+
+  /* Gradients for Nature */
+  --gradient-bg-1: #e7f6ff;
+  --gradient-bg-2: #e3f4e7;
+  --gradient-bg-3: #b2e2a2;
+  --gradient-bg-4: #86c97a;
+}
+
+/* Ocean (Blue/Teal) */
+:root[data-variant="ocean"] {
+  --text-primary: #1a252a;
+  --text-secondary: #3b4e56;
+  --text-muted: #6b7f85;
+
+  --accent-primary: #4da6b2;
+  --accent-secondary: #74ccd1;
+  --accent-glow: rgba(77, 166, 178, 0.4);
+
+  --surface-shadow: rgba(26, 52, 62, 0.12);
+
+  /* Gradients for Ocean */
+  --gradient-bg-1: #e7faff;
+  --gradient-bg-2: #dfeeff;
+  --gradient-bg-3: #a2cfe2;
+  --gradient-bg-4: #7ac0c9;
+}
+
+/* Sunset (Warm/Pink/Orange) */
+:root[data-variant="sunset"] {
+  --text-primary: #2a1a1a;
+  --text-secondary: #563b3b;
+  --text-muted: #856b6b;
+
+  --accent-primary: #b24d68;
+  --accent-secondary: #d1748f;
+  --accent-glow: rgba(178, 77, 104, 0.4);
+
+  --surface-shadow: rgba(62, 26, 26, 0.12);
+
+  /* Gradients for Sunset */
+  --gradient-bg-1: #fff0e7;
+  --gradient-bg-2: #ffe3e3;
+  --gradient-bg-3: #e2a2a2;
+  --gradient-bg-4: #c97a8a;
+}
+
+/* Frost (White/Silver - Minimal) */
+:root[data-variant="frost"] {
+  --text-primary: #222222;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+
+  --accent-primary: #888888;
+  --accent-secondary: #aaaaaa;
+  --accent-glow: rgba(136, 136, 136, 0.3);
+
+  --surface-shadow: rgba(0, 0, 0, 0.08);
+
+  /* Gradients for Frost */
+  --gradient-bg-1: #ffffff;
+  --gradient-bg-2: #f0f2f5;
+  --gradient-bg-3: #dbe4eb;
+  --gradient-bg-4: #c0cdd6;
+}
+
+/* Midnight (Dark Glass) */
+:root[data-variant="midnight"] {
+  color-scheme: dark;
+  --bg-primary: rgba(10, 10, 15, 0.95);
+  --bg-secondary: rgba(18, 18, 28, 0.9);
+  --bg-tertiary: rgba(25, 25, 40, 0.95);
+  --bg-hover: rgba(35, 35, 50, 0.85);
+  --bg-active: rgba(50, 50, 70, 0.95);
+
+  --text-primary: #ffffff;
+  --text-secondary: #d0d0e8;
+  --text-muted: #a0a0c0;
+
+  --accent-primary: #7a88cf;
+  --accent-secondary: #9aa6e0;
+  --accent-glow: rgba(122, 136, 207, 0.3);
+
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-hover: rgba(255, 255, 255, 0.2);
+
+  --surface-highlight: rgba(255, 255, 255, 0.12);
+  --surface-shadow: rgba(0, 0, 0, 0.8);
+  --surface-stroke: rgba(255, 255, 255, 0.12);
+
+  /* Gradients for Midnight */
+  --gradient-bg-1: #020204;
+  --gradient-bg-2: #05060a;
+  --gradient-bg-3: #0a0c12;
+  --gradient-bg-4: #0e1018;
+}
+
+/* Liquid Glass (Apple-like) */
+:root[data-variant="liquid"] {
+  color-scheme: light;
+  
+  /* Extremely transparent backgrounds for maximum glass effect */
+  --bg-primary: rgba(255, 255, 255, 0.2);
+  --bg-secondary: rgba(255, 255, 255, 0.15);
+  --bg-tertiary: rgba(255, 255, 255, 0.3);
+  --bg-hover: rgba(255, 255, 255, 0.4);
+  --bg-active: rgba(255, 255, 255, 0.6);
+
+  --text-primary: #1d1d1f; /* Apple's dark gray */
+  --text-secondary: rgba(29, 29, 31, 0.7);
+  --text-muted: rgba(29, 29, 31, 0.5);
+
+  --accent-primary: #007aff; /* Apple Blue */
+  --accent-secondary: #5ac8fa;
+  --accent-glow: rgba(0, 122, 255, 0.35);
+
+  --border-color: rgba(255, 255, 255, 0.35);
+  --border-hover: rgba(255, 255, 255, 0.5);
+
+  /* Enhanced Glass Settings */
+  --glass-blur: 50px; /* Deeper blur */
+  --glass-saturation: 180%; /* Vibrant colors shine through */
+  
+  --surface-highlight: rgba(255, 255, 255, 0.6);
+  --surface-shadow: rgba(0, 0, 0, 0.05);
+  --surface-stroke: rgba(255, 255, 255, 0.4);
+
+  /* Liquid Mesh Gradients - Vibrant and Smooth */
+  --gradient-bg-1: #fbfbfb;
+  --gradient-bg-2: #e9e9e9;
+  --gradient-bg-3: #e8f2fc; /* Light Blue tint */
+  --gradient-bg-4: #f7e6e6; /* Light Pink tint */
+
+  /* Specific Override for Liquid Animation */
+  --liquid-mesh-1: #ff3b30;
+  --liquid-mesh-2: #ff9500;
+  --liquid-mesh-3: #ffcc00;
+  --liquid-mesh-4: #34c759;
+  --liquid-mesh-5: #007aff;
+  --liquid-mesh-6: #5856d6;
+  --liquid-mesh-7: #af52de;
+}
+/* Liquid Glass Body Specifics */
+:root[data-variant="liquid"] body {
+  /* Using the defined mesh colors for a deep, vibrant flow */
+  background-color: #ffffff;
+  background-image: 
+    radial-gradient(at 0% 0%, var(--liquid-mesh-3) 0px, transparent 40%),
+    radial-gradient(at 100% 0%, var(--liquid-mesh-4) 0px, transparent 40%),
+    radial-gradient(at 100% 100%, var(--liquid-mesh-2) 0px, transparent 40%),
+    radial-gradient(at 0% 100%, var(--liquid-mesh-5) 0px, transparent 40%),
+    radial-gradient(at 50% 50%, var(--liquid-mesh-1) 0px, transparent 50%);
+  background-size: 180% 180%;
+  animation: liquidMeshFlow 25s ease-in-out infinite alternate;
+}
+
+@keyframes liquidMeshFlow {
+  0% {
+    background-position: 0% 50%;
+    background-size: 180% 180%;
+  }
+  50% {
+    background-position: 100% 50%;
+    background-size: 200% 200%;
+  }
+  100% {
+    background-position: 50% 100%;
+    background-size: 150% 150%;
+  }
+}
+
+/* Classic Theme Overrides */
+:root[data-theme="classic"] {
+  /* ... (Existing Classic Theme variables kept mostly same but updated to match variable names if needed) ... */
+  /* Re-defining classic here to ensure it overrides specific variants if switched */
+  color-scheme: dark;
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --bg-tertiary: #252542;
+  --bg-hover: #2d2d4a;
+  --bg-active: #3d3d5c;
+
+  --text-primary: #e8e8f0;
+  --text-secondary: #a0a0b8;
+  --text-muted: #6a6a80;
+
+  --accent-primary: #6366f1;
+  --accent-secondary: #818cf8;
+  --accent-glow: rgba(99, 102, 241, 0.3);
+
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.15);
+
+  --glass-blur: 0px;
+  --glass-saturation: 100%;
+  --surface-highlight: rgba(255, 255, 255, 0.08);
+  --surface-shadow: rgba(0, 0, 0, 0.4);
+  --surface-stroke: var(--border-color);
+
+  /* Reset gradients for classic */
+  --gradient-bg-1: #0f0f1a;
+  --gradient-bg-2: #0f0f1a;
+  --gradient-bg-3: #0f0f1a;
+  --gradient-bg-4: #0f0f1a;
+
+  --frame-padding: 0px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+/* リセットとベーススタイル */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  font-family:
+    "Hiragino Sans", "Avenir Next", "Helvetica Neue", "Noto Sans JP", sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dynamic Background - Mac OS 26 Style */
+body {
+  position: relative;
+  /* Complex organic mesh gradient */
+  background:
+    radial-gradient(at 0% 0%, var(--gradient-bg-1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, var(--gradient-bg-2) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, var(--gradient-bg-3) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, var(--gradient-bg-4) 0px, transparent 50%),
+    linear-gradient(135deg, var(--gradient-bg-1), var(--gradient-bg-3));
+  background-attachment: fixed;
+  background-size: 200% 200%;
+  animation: meshFlow 20s ease infinite alternate;
+}
+
+@keyframes meshFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 50% 100%;
+  }
+}
+
+/* Floating Glass Orbs - Background Ambience */
+body::before {
+  content: "";
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(255, 255, 255, 0.15) 0%,
+      transparent 25%
+    );
+  filter: blur(60px);
+  z-index: -1;
+  pointer-events: none;
+  animation: orbFloat 30s linear infinite;
+}
+
+@keyframes orbFloat {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Classic theme cleanups */
+:root[data-theme="classic"] body {
+  background: var(--bg-primary);
+  animation: none;
+}
+:root[data-theme="classic"] body::before,
+:root[data-theme="classic"] body::after {
+  display: none;
+}
+
+/* ブラウザコンテナ */
+.browser-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background: transparent;
+}
+
+:root[data-theme="classic"] .browser-container {
+  background: var(--bg-primary);
+}
+
+/* メインコンテンツエリア */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: transparent;
+}
+
+:root[data-theme="classic"] .main-content {
+  background: var(--bg-secondary);
+}
+
+/* スクロールバーのスタイル */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(34, 79, 41, 0.25);
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 79, 41, 0.4);
+  background-clip: padding-box;
+}
+
+:root[data-theme="classic"] ::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  background-clip: padding-box;
+}
+
+:root[data-theme="classic"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-active);
+  background-clip: padding-box;
+}
+
+/* フォーカスアウトライン */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(77, 178, 106, 0.75);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(77, 178, 106, 0.2);
+}
+
+:root[data-theme="classic"] :focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* ボタンのベーススタイル */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 入力フィールドのベーススタイル */
+input {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  background: transparent;
+  color: inherit;
+}
+
+/* 選択無効化 (UIコンポーネント) */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* アニメーション用のユーティリティ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(20px, -10px, 0) rotate(1deg);
+  }
+}
