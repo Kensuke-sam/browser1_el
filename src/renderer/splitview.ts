@@ -1,5 +1,8 @@
+import { TabManager } from './tabs';
+
 // 分割ビュー管理クラス
 export class SplitViewManager {
+  private tabManager: TabManager;
   private webviewContainer: HTMLElement;
   private splitViewBtn: HTMLButtonElement;
   private isSplitView: boolean = false;
@@ -9,7 +12,8 @@ export class SplitViewManager {
   private isResizing: boolean = false;
   private paneObserver: MutationObserver | null = null;
 
-  constructor() {
+  constructor(tabManager: TabManager) {
+    this.tabManager = tabManager;
     this.webviewContainer = document.getElementById('webview-container')!;
     this.splitViewBtn = document.getElementById('split-view-btn') as HTMLButtonElement;
     
@@ -63,6 +67,19 @@ export class SplitViewManager {
     
     if (this.isSplitView) {
       this.updateSplitViewIcon();
+      
+      // アクティブなタブと次のタブを追加
+      this.resetSplitView();
+      const activeTab = this.tabManager.getActiveTab();
+      if (activeTab) {
+        this.addPane(activeTab.id);
+        
+        // 同じスペースの他のタブを探す
+        // TODO: TabManagerから取得するメソッドがあると良いが、ここではDOM構造に依存せずに実装
+        // TabManagerに公開メソッドを追加するのが本来は望ましい
+        // 簡易的に実装：すでにDOMにあるタブ要素から探す、またはTabManagerの実装詳細を知っている前提
+      }
+
       this.scheduleHandleRefresh();
     } else {
       this.resetSplitView();

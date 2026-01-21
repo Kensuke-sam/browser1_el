@@ -27,7 +27,7 @@ class ZenBrowser {
     this.tabManager = new TabManager();
     this.navigationManager = new NavigationManager(this.tabManager);
     this.sidebarManager = new SidebarManager();
-    this.splitViewManager = new SplitViewManager();
+    this.splitViewManager = new SplitViewManager(this.tabManager);
     this.spaceManager = new SpaceManager();
     this.panelManager = new PanelManager();
 

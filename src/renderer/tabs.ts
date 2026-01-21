@@ -14,7 +14,7 @@ export interface Tab {
 export class TabManager {
   private tabs: Map<string, Tab> = new Map();
   private activeTabId: string | null = null;
-  private activeSpaceId: string = 'default';
+  private activeSpaceId: string = "default";
   private lastActiveTabBySpace: Map<string, string> = new Map();
   private tabsContainerElement: HTMLElement;
   private tabsListElement: HTMLElement;
@@ -23,44 +23,46 @@ export class TabManager {
   private webviewContainer: HTMLElement;
   private tabChangeListeners: Array<(tab: Tab | null) => void> = [];
   private tabNavigationListeners: Array<(tab: Tab, url: string) => void> = [];
-  private spaceSwitchListeners: Array<(spaceId: string, tabId: string) => void> = [];
+  private spaceSwitchListeners: Array<
+    (spaceId: string, tabId: string) => void
+  > = [];
   private isYellowModeEnabled: boolean = true;
 
   constructor() {
-    this.tabsContainerElement = document.getElementById('tabs-container')!;
-    this.tabsListElement = document.getElementById('tabs-list')!;
-    this.otherTabsListElement = document.getElementById('other-tabs-list')!;
-    this.otherTabsSection = document.getElementById('other-tabs-section')!;
-    this.webviewContainer = document.getElementById('webview-container')!;
+    this.tabsContainerElement = document.getElementById("tabs-container")!;
+    this.tabsListElement = document.getElementById("tabs-list")!;
+    this.otherTabsListElement = document.getElementById("other-tabs-list")!;
+    this.otherTabsSection = document.getElementById("other-tabs-section")!;
+    this.webviewContainer = document.getElementById("webview-container")!;
     this.setupEventListeners();
   }
 
   private setupEventListeners(): void {
     // 新規タブボタン
-    document.getElementById('new-tab-btn')?.addEventListener('click', () => {
+    document.getElementById("new-tab-btn")?.addEventListener("click", () => {
       this.createTab();
     });
 
     // キーボードショートカット
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener("keydown", (e) => {
       if (e.ctrlKey || e.metaKey) {
-        if (e.shiftKey && e.key.toLowerCase() === 'y') {
-            e.preventDefault();
-            this.toggleYellowMode();
-            return;
+        if (e.shiftKey && e.key.toLowerCase() === "y") {
+          e.preventDefault();
+          this.toggleYellowMode();
+          return;
         }
         switch (e.key) {
-          case 't':
+          case "t":
             e.preventDefault();
             this.createTab();
             break;
-          case 'w':
+          case "w":
             e.preventDefault();
             if (this.activeTabId) {
               this.closeTab(this.activeTabId);
             }
             break;
-          case 'Tab':
+          case "Tab":
             e.preventDefault();
             this.switchToNextTab(e.shiftKey);
             break;
@@ -92,15 +94,15 @@ export class TabManager {
   }
 
   // 新しいタブを作成
-  createTab(url: string = '', spaceId?: string): Tab {
+  createTab(url: string = "", spaceId?: string): Tab {
     const resolvedSpaceId = spaceId ?? this.activeSpaceId;
     const id = `tab-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const tab: Tab = {
       id,
-      title: '新しいタブ',
-      url: url || 'about:blank',
-      favicon: '',
+      title: "新しいタブ",
+      url: url || "about:blank",
+      favicon: "",
       isLoading: false,
       canGoBack: false,
       canGoForward: false,
@@ -117,16 +119,19 @@ export class TabManager {
 
   // タブのHTML要素を作成
   private renderTab(tab: Tab): void {
-    const tabElement = document.createElement('div');
-    tabElement.className = 'tab';
+    const tabElement = document.createElement("div");
+    tabElement.className = "tab";
     tabElement.dataset.tabId = tab.id;
     tabElement.dataset.spaceId = tab.spaceId;
     tabElement.draggable = true;
-    tabElement.classList.toggle('other-space', tab.spaceId !== this.activeSpaceId);
+    tabElement.classList.toggle(
+      "other-space",
+      tab.spaceId !== this.activeSpaceId,
+    );
 
     tabElement.innerHTML = `
-      <img class="tab-favicon ${tab.isLoading ? 'loading' : ''}" 
-           src="${tab.favicon || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><circle cx=%228%22 cy=%228%22 r=%226%22 fill=%22%236366f1%22/></svg>'}" 
+      <img class="tab-favicon ${tab.isLoading ? "loading" : ""}" 
+           src="${tab.favicon || "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><circle cx=%228%22 cy=%228%22 r=%226%22 fill=%22%236366f1%22/></svg>"}" 
            alt="">
       <div class="tab-info">
         <span class="tab-title">${this.escapeHtml(tab.title)}</span>
@@ -141,8 +146,8 @@ export class TabManager {
     `;
 
     // クリックでタブをアクティブに
-    tabElement.addEventListener('click', (e) => {
-      if (!(e.target as HTMLElement).closest('.tab-close')) {
+    tabElement.addEventListener("click", (e) => {
+      if (!(e.target as HTMLElement).closest(".tab-close")) {
         if (tab.spaceId !== this.activeSpaceId) {
           this.requestSpaceSwitch(tab.spaceId, tab.id);
           return;
@@ -152,7 +157,7 @@ export class TabManager {
     });
 
     // 閉じるボタン
-    tabElement.querySelector('.tab-close')?.addEventListener('click', (e) => {
+    tabElement.querySelector(".tab-close")?.addEventListener("click", (e) => {
       e.stopPropagation();
       this.closeTab(tab.id);
     });
@@ -170,28 +175,28 @@ export class TabManager {
 
   // ドラッグ&ドロップのセットアップ
   private setupDragAndDrop(element: HTMLElement, tabId: string): void {
-    element.addEventListener('dragstart', (e) => {
-      element.classList.add('dragging');
-      e.dataTransfer?.setData('text/plain', tabId);
+    element.addEventListener("dragstart", (e) => {
+      element.classList.add("dragging");
+      e.dataTransfer?.setData("text/plain", tabId);
     });
 
-    element.addEventListener('dragend', () => {
-      element.classList.remove('dragging');
+    element.addEventListener("dragend", () => {
+      element.classList.remove("dragging");
     });
 
-    element.addEventListener('dragover', (e) => {
+    element.addEventListener("dragover", (e) => {
       e.preventDefault();
-      element.classList.add('drag-over');
+      element.classList.add("drag-over");
     });
 
-    element.addEventListener('dragleave', () => {
-      element.classList.remove('drag-over');
+    element.addEventListener("dragleave", () => {
+      element.classList.remove("drag-over");
     });
 
-    element.addEventListener('drop', (e) => {
+    element.addEventListener("drop", (e) => {
       e.preventDefault();
-      element.classList.remove('drag-over');
-      const draggedId = e.dataTransfer?.getData('text/plain');
+      element.classList.remove("drag-over");
+      const draggedId = e.dataTransfer?.getData("text/plain");
       if (draggedId && draggedId !== tabId) {
         this.reorderTabs(draggedId, tabId);
       }
@@ -223,13 +228,13 @@ export class TabManager {
 
   // Webviewを作成
   private createWebview(tab: Tab): void {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'webview-wrapper';
+    const wrapper = document.createElement("div");
+    wrapper.className = "webview-wrapper";
     wrapper.id = `webview-wrapper-${tab.id}`;
     wrapper.dataset.spaceId = tab.spaceId;
-    wrapper.style.display = tab.spaceId === this.activeSpaceId ? '' : 'none';
+    wrapper.style.display = tab.spaceId === this.activeSpaceId ? "" : "none";
 
-    if (tab.url === 'about:blank' || !tab.url) {
+    if (tab.url === "about:blank" || !tab.url) {
       // 新規タブページを表示
       wrapper.innerHTML = `
         <div class="new-tab-page">
@@ -243,18 +248,20 @@ export class TabManager {
       `;
 
       // 検索入力のイベント
-      const searchInput = wrapper.querySelector(`#newtab-search-${tab.id}`) as HTMLInputElement;
-      searchInput?.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && searchInput.value.trim()) {
+      const searchInput = wrapper.querySelector(
+        `#newtab-search-${tab.id}`,
+      ) as HTMLInputElement;
+      searchInput?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && searchInput.value.trim()) {
           this.navigateTab(tab.id, searchInput.value.trim());
         }
       });
     } else {
       // Webviewを作成
-      const webview = document.createElement('webview');
+      const webview = document.createElement("webview");
       this.applyWebviewPreload(webview);
-      webview.setAttribute('src', tab.url);
-      webview.setAttribute('allowpopups', 'true');
+      webview.setAttribute("src", tab.url);
+      webview.setAttribute("allowpopups", "true");
       wrapper.appendChild(webview);
       this.setupWebviewEvents(webview, tab.id);
     }
@@ -263,42 +270,56 @@ export class TabManager {
   }
 
   // Webviewのイベントをセットアップ
-  private setupWebviewEvents(webview: Electron.WebviewTag, tabId: string): void {
-    webview.addEventListener('did-start-loading', () => {
+  private setupWebviewEvents(
+    webview: Electron.WebviewTag,
+    tabId: string,
+  ): void {
+    webview.addEventListener("did-start-loading", () => {
       this.updateTab(tabId, { isLoading: true });
     });
 
-    webview.addEventListener('did-stop-loading', () => {
+    webview.addEventListener("did-stop-loading", () => {
       this.updateTab(tabId, { isLoading: false });
     });
 
-    webview.addEventListener('page-title-updated', (e: any) => {
+    webview.addEventListener("page-title-updated", (e: any) => {
       this.updateTab(tabId, { title: e.title });
     });
 
-    webview.addEventListener('page-favicon-updated', (e: any) => {
+    webview.addEventListener("page-favicon-updated", (e: any) => {
       if (e.favicons && e.favicons.length > 0) {
         this.updateTab(tabId, { favicon: e.favicons[0] });
       }
     });
 
-    webview.addEventListener('did-navigate', (e: any) => {
-      this.updateTab(tabId, { 
+    webview.addEventListener("did-navigate", (e: any) => {
+      this.updateTab(tabId, {
         url: e.url,
         canGoBack: webview.canGoBack(),
-        canGoForward: webview.canGoForward()
+        canGoForward: webview.canGoForward(),
       });
       this.notifyTabNavigation(tabId, e.url);
     });
 
-    webview.addEventListener('did-navigate-in-page', (e: any) => {
+    webview.addEventListener("did-navigate-in-page", (e: any) => {
       if (e.isMainFrame) {
-        this.updateTab(tabId, { 
+        this.updateTab(tabId, {
           url: e.url,
           canGoBack: webview.canGoBack(),
-          canGoForward: webview.canGoForward()
+          canGoForward: webview.canGoForward(),
         });
         this.notifyTabNavigation(tabId, e.url);
+      }
+    });
+
+    // Handle new window requests (target="_blank")
+    webview.addEventListener('new-window', (e: any) => {
+      e.preventDefault();
+      const currentTab = this.tabs.get(tabId);
+      if (currentTab) {
+        this.createTab(e.url, currentTab.spaceId);
+      } else {
+        this.createTab(e.url);
       }
     });
 
@@ -394,34 +415,47 @@ export class TabManager {
       })();
     `;
 
-    webview.addEventListener('dom-ready', () => {
+    webview.addEventListener("dom-ready", () => {
       // Set initial state
-      webview.executeJavaScript(`window.__ZEN_YELLOW_ENABLED = ${this.isYellowModeEnabled};`).then(() => {
-          webview.executeJavaScript(injectionScript).catch(e => console.error('JS Injection failed', e));
-      });
-    });
-
-    webview.addEventListener('did-navigate', () => {
-        webview.executeJavaScript(`window.__ZEN_YELLOW_ENABLED = ${this.isYellowModeEnabled};`).then(() => {
-            webview.executeJavaScript(injectionScript).catch(() => {});
+      webview
+        .executeJavaScript(
+          `window.__ZEN_YELLOW_ENABLED = ${this.isYellowModeEnabled};`,
+        )
+        .then(() => {
+          webview
+            .executeJavaScript(injectionScript)
+            .catch((e) => console.error("JS Injection failed", e));
         });
     });
 
+    webview.addEventListener("did-navigate", () => {
+      webview
+        .executeJavaScript(
+          `window.__ZEN_YELLOW_ENABLED = ${this.isYellowModeEnabled};`,
+        )
+        .then(() => {
+          webview.executeJavaScript(injectionScript).catch(() => {});
+        });
+    });
   }
 
   // Toggle Yellow Mode
   toggleYellowMode(): void {
     this.isYellowModeEnabled = !this.isYellowModeEnabled;
-    console.log('[TabManager] Toggling Yellow Mode:', this.isYellowModeEnabled);
-    
+    console.log("[TabManager] Toggling Yellow Mode:", this.isYellowModeEnabled);
+
     // Broadcast to all active webviews
     // In a multi-tab setup, ideally checking `this.tabs` or `getActiveWebview` is enough if user only cares about current
     // But let's verify all loaded webviews to be safe
-    const webviews = this.webviewContainer.querySelectorAll('webview');
+    const webviews = this.webviewContainer.querySelectorAll("webview");
     webviews.forEach((webview: any) => {
-        try {
-            webview.executeJavaScript(`window.__ZEN_YELLOW_ENABLED = ${this.isYellowModeEnabled};`);
-        } catch(e) { console.error(e); }
+      try {
+        webview.executeJavaScript(
+          `window.__ZEN_YELLOW_ENABLED = ${this.isYellowModeEnabled};`,
+        );
+      } catch (e) {
+        console.error(e);
+      }
     });
   }
 
@@ -443,16 +477,20 @@ export class TabManager {
     const tab = this.tabs.get(tabId);
     if (!tab) return;
 
-    const element = this.tabsContainerElement.querySelector(`[data-tab-id="${tabId}"]`);
+    const element = this.tabsContainerElement.querySelector(
+      `[data-tab-id="${tabId}"]`,
+    );
     if (!element) return;
 
-    const favicon = element.querySelector('.tab-favicon') as HTMLImageElement;
-    const title = element.querySelector('.tab-title');
-    const url = element.querySelector('.tab-url');
+    const favicon = element.querySelector(".tab-favicon") as HTMLImageElement;
+    const title = element.querySelector(".tab-title");
+    const url = element.querySelector(".tab-url");
 
     if (favicon) {
-      favicon.src = tab.favicon || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><circle cx=%228%22 cy=%228%22 r=%226%22 fill=%22%236366f1%22/></svg>';
-      favicon.classList.toggle('loading', tab.isLoading);
+      favicon.src =
+        tab.favicon ||
+        "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><circle cx=%228%22 cy=%228%22 r=%226%22 fill=%22%236366f1%22/></svg>";
+      favicon.classList.toggle("loading", tab.isLoading);
     }
     if (title) title.textContent = tab.title;
     if (url) url.textContent = this.getDisplayUrl(tab.url);
@@ -465,20 +503,24 @@ export class TabManager {
       const prevElement = this.tabsContainerElement.querySelector(
         `[data-tab-id="${this.activeTabId}"]`,
       );
-      prevElement?.classList.remove('active');
-      
-      const prevWrapper = document.getElementById(`webview-wrapper-${this.activeTabId}`);
-      prevWrapper?.classList.remove('active');
+      prevElement?.classList.remove("active");
+
+      const prevWrapper = document.getElementById(
+        `webview-wrapper-${this.activeTabId}`,
+      );
+      prevWrapper?.classList.remove("active");
     }
 
     // 新しいタブをアクティブに
     this.activeTabId = tabId;
-    
-    const element = this.tabsContainerElement.querySelector(`[data-tab-id="${tabId}"]`);
-    element?.classList.add('active');
-    
+
+    const element = this.tabsContainerElement.querySelector(
+      `[data-tab-id="${tabId}"]`,
+    );
+    element?.classList.add("active");
+
     const wrapper = document.getElementById(`webview-wrapper-${tabId}`);
-    wrapper?.classList.add('active');
+    wrapper?.classList.add("active");
 
     const tab = this.tabs.get(tabId);
     if (tab) {
@@ -493,7 +535,9 @@ export class TabManager {
     if (!tab) return;
 
     // DOM要素を削除
-    const element = this.tabsContainerElement.querySelector(`[data-tab-id="${tabId}"]`);
+    const element = this.tabsContainerElement.querySelector(
+      `[data-tab-id="${tabId}"]`,
+    );
     element?.remove();
 
     const wrapper = document.getElementById(`webview-wrapper-${tabId}`);
@@ -510,7 +554,7 @@ export class TabManager {
         this.activateTab(remainingTabs[remainingTabs.length - 1]);
       } else {
         this.activeTabId = null;
-        this.createTab('', tab.spaceId); // スペース内の最後のタブが閉じられたら新規タブを作成
+        this.createTab("", tab.spaceId); // スペース内の最後のタブが閉じられたら新規タブを作成
       }
     }
   }
@@ -520,9 +564,11 @@ export class TabManager {
     const tabIds = this.getTabIdsForSpace(this.activeSpaceId);
     if (tabIds.length <= 1) return;
 
-    const currentIndex = this.activeTabId ? tabIds.indexOf(this.activeTabId) : 0;
+    const currentIndex = this.activeTabId
+      ? tabIds.indexOf(this.activeTabId)
+      : 0;
     let nextIndex = reverse ? currentIndex - 1 : currentIndex + 1;
-    
+
     if (nextIndex < 0) nextIndex = tabIds.length - 1;
     if (nextIndex >= tabIds.length) nextIndex = 0;
 
@@ -538,14 +584,14 @@ export class TabManager {
     const normalizedUrl = this.normalizeUrl(url);
 
     // 既存のwebviewがあれば更新、なければ作成
-    let webview = wrapper.querySelector('webview') as Electron.WebviewTag;
-    
+    let webview = wrapper.querySelector("webview") as Electron.WebviewTag;
+
     if (!webview) {
       // 新規タブページを削除
-      wrapper.innerHTML = '';
-      webview = document.createElement('webview') as Electron.WebviewTag;
+      wrapper.innerHTML = "";
+      webview = document.createElement("webview") as Electron.WebviewTag;
       this.applyWebviewPreload(webview);
-      webview.setAttribute('allowpopups', 'true');
+      webview.setAttribute("allowpopups", "true");
       wrapper.appendChild(webview);
       this.setupWebviewEvents(webview, tabId);
     }
@@ -557,39 +603,44 @@ export class TabManager {
   // URLを正規化
   private normalizeUrl(input: string): string {
     const trimmed = input.trim();
-    
+
     // URLパターンをチェック
     if (/^https?:\/\//i.test(trimmed)) {
       return trimmed;
     }
-    
+
     // ドメインのようなパターン
     if (/^[\w-]+\.[\w.-]+/.test(trimmed)) {
       return `https://${trimmed}`;
     }
-    
+
     // 検索クエリとして扱う
-    const storedSettings = localStorage.getItem('zen-settings');
+    const storedSettings = localStorage.getItem("zen-settings");
     if (!storedSettings) {
       return `https://www.google.com/search?q=${encodeURIComponent(trimmed)}`;
     }
 
     try {
-      const settings = JSON.parse(storedSettings) as { searchEngine?: string; customSearchUrl?: string };
+      const settings = JSON.parse(storedSettings) as {
+        searchEngine?: string;
+        customSearchUrl?: string;
+      };
       const query = encodeURIComponent(trimmed);
       switch (settings.searchEngine) {
-        case 'duckduckgo':
+        case "duckduckgo":
           return `https://duckduckgo.com/?q=${query}`;
-        case 'bing':
+        case "bing":
           return `https://www.bing.com/search?q=${query}`;
-        case 'custom': {
+        case "custom": {
           const template = settings.customSearchUrl?.trim();
           if (template) {
-            return template.includes('{query}') ? template.replaceAll('{query}', query) : `${template}${query}`;
+            return template.includes("{query}")
+              ? template.replaceAll("{query}", query)
+              : `${template}${query}`;
           }
           return `https://www.google.com/search?q=${query}`;
         }
-        case 'google':
+        case "google":
         default:
           return `https://www.google.com/search?q=${query}`;
       }
@@ -600,28 +651,28 @@ export class TabManager {
 
   private applyWebviewPreload(webview: Electron.WebviewTag): void {
     let preloadPath = window.electronAPI?.paths?.webviewPreload;
-    console.log('[Tabs] Raw preload path:', preloadPath);
+    console.log("[Tabs] Raw preload path:", preloadPath);
 
     if (!preloadPath) {
-      console.error('[Tabs] No preload path found!');
+      console.error("[Tabs] No preload path found!");
       return;
     }
 
     // Ensure file:// protocol
-    if (!preloadPath.startsWith('file://')) {
+    if (!preloadPath.startsWith("file://")) {
       preloadPath = `file://${preloadPath}`;
     }
 
-    console.log('[Tabs] Setting webview preload:', preloadPath);
-    webview.setAttribute('preload', preloadPath);
+    console.log("[Tabs] Setting webview preload:", preloadPath);
+    webview.setAttribute("preload", preloadPath);
   }
 
   // 表示用URLを取得
   private getDisplayUrl(url: string): string {
-    if (!url || url === 'about:blank') return '';
+    if (!url || url === "about:blank") return "";
     try {
       const parsed = new URL(url);
-      return parsed.hostname + (parsed.pathname !== '/' ? parsed.pathname : '');
+      return parsed.hostname + (parsed.pathname !== "/" ? parsed.pathname : "");
     } catch {
       return url;
     }
@@ -629,7 +680,7 @@ export class TabManager {
 
   // HTMLエスケープ
   private escapeHtml(text: string): string {
-    const div = document.createElement('div');
+    const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
   }
@@ -642,8 +693,10 @@ export class TabManager {
   // 現在のWebviewを取得
   getActiveWebview(): Electron.WebviewTag | null {
     if (!this.activeTabId) return null;
-    const wrapper = document.getElementById(`webview-wrapper-${this.activeTabId}`);
-    return wrapper?.querySelector('webview') as Electron.WebviewTag | null;
+    const wrapper = document.getElementById(
+      `webview-wrapper-${this.activeTabId}`,
+    );
+    return wrapper?.querySelector("webview") as Electron.WebviewTag | null;
   }
 
   // 現在のスペースを設定
@@ -680,7 +733,7 @@ export class TabManager {
       return;
     }
 
-    this.createTab('', spaceId);
+    this.createTab("", spaceId);
   }
 
   // 現在のスペースIDを取得
@@ -690,17 +743,17 @@ export class TabManager {
 
   private getTabIdsForSpace(spaceId: string): string[] {
     return Array.from(this.tabs.values())
-      .filter(tab => tab.spaceId === spaceId)
-      .map(tab => tab.id);
+      .filter((tab) => tab.spaceId === spaceId)
+      .map((tab) => tab.id);
   }
 
   private updateSpaceVisibility(): void {
     this.tabsContainerElement
-      .querySelectorAll<HTMLElement>('.tab')
+      .querySelectorAll<HTMLElement>(".tab")
       .forEach((tabElement) => {
         const spaceId = tabElement.dataset.spaceId;
         const isActiveSpace = spaceId === this.activeSpaceId;
-        tabElement.classList.toggle('other-space', !isActiveSpace);
+        tabElement.classList.toggle("other-space", !isActiveSpace);
         const targetList = isActiveSpace
           ? this.tabsListElement
           : this.otherTabsListElement;
@@ -711,15 +764,18 @@ export class TabManager {
 
     this.updateOtherTabsVisibility();
 
-    this.webviewContainer.querySelectorAll<HTMLElement>('.webview-wrapper').forEach((wrapper) => {
-      const spaceId = wrapper.dataset.spaceId;
-      wrapper.style.display = spaceId === this.activeSpaceId ? '' : 'none';
-    });
+    this.webviewContainer
+      .querySelectorAll<HTMLElement>(".webview-wrapper")
+      .forEach((wrapper) => {
+        const spaceId = wrapper.dataset.spaceId;
+        wrapper.style.display = spaceId === this.activeSpaceId ? "" : "none";
+      });
   }
 
   private updateOtherTabsVisibility(): void {
-    const hasOtherTabs = this.otherTabsListElement.querySelector('.tab') !== null;
-    this.otherTabsSection.classList.toggle('is-visible', hasOtherTabs);
+    const hasOtherTabs =
+      this.otherTabsListElement.querySelector(".tab") !== null;
+    this.otherTabsSection.classList.toggle("is-visible", hasOtherTabs);
   }
 
   private requestSpaceSwitch(spaceId: string, tabId: string): void {
