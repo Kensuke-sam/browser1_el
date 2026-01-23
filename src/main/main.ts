@@ -6,6 +6,7 @@ import * as path from 'path';
 let mainWindow: BrowserWindow | null = null;
 
 const SIDEBAR_TOGGLE_ACCELERATOR = 'CommandOrControl+Shift+H';
+const EXAM_HOST = 'exam.iniad.org';
 
 type StoredExtension = {
   id: string;
@@ -86,6 +87,24 @@ const loadStoredExtensions = async (): Promise<void> => {
   }
 };
 
+const shouldRelaxCsp = (urlString: string): boolean => {
+  try {
+    const parsed = new URL(urlString);
+    return parsed.hostname.toLowerCase() === EXAM_HOST;
+  } catch {
+    return false;
+  }
+};
+
+const stripHeader = (headers: Record<string, string[]>, headerName: string): void => {
+  const target = headerName.toLowerCase();
+  Object.keys(headers).forEach((key) => {
+    if (key.toLowerCase() === target) {
+      delete headers[key];
+    }
+  });
+};
+
 // サンドボックス内のプリロードスクリプト向けにパスを設定
 const webviewPreloadPath = path.join(__dirname, '../renderer/webview-preload.js');
 process.env.WEBVIEW_PRELOAD_PATH = webviewPreloadPath;
@@ -111,10 +130,14 @@ function createWindow(): void {
   // CSPを除去してスクリプト注入を許可する
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     const responseHeaders = details.responseHeaders;
-    if (responseHeaders) {
-      delete responseHeaders['content-security-policy'];
-      delete responseHeaders['content-security-policy-report-only'];
-      delete responseHeaders['x-frame-options'];
+    if (
+      responseHeaders &&
+      shouldRelaxCsp(details.url) &&
+      (details.resourceType === 'mainFrame' || details.resourceType === 'subFrame')
+    ) {
+      stripHeader(responseHeaders, 'content-security-policy');
+      stripHeader(responseHeaders, 'content-security-policy-report-only');
+      stripHeader(responseHeaders, 'x-frame-options');
     }
     callback({ responseHeaders });
   });
@@ -197,6 +220,35 @@ ipcMain.handle('window:isMaximized', () => {
   return mainWindow?.isMaximized() ?? false;
 });
 
+// Fullscreen state management
+let previousBounds: Electron.Rectangle | null = null;
+let wasMaximized = false;
+
+ipcMain.handle('fullscreen:enter', () => {
+  if (!mainWindow) return;
+
+  // Save state before entering fullscreen
+  wasMaximized = mainWindow.isMaximized();
+  if (!wasMaximized) {
+    previousBounds = mainWindow.getBounds();
+  }
+
+  mainWindow.setSimpleFullScreen(true);
+});
+
+ipcMain.handle('fullscreen:leave', () => {
+  if (!mainWindow) return;
+
+  mainWindow.setSimpleFullScreen(false);
+
+  // Restore state
+  if (wasMaximized) {
+    mainWindow.maximize();
+  } else if (previousBounds) {
+    mainWindow.setBounds(previousBounds);
+  }
+});
+
 ipcMain.handle('extensions:list', async () => {
   const stored = await readExtensionsStore();
   const loaded = session.defaultSession.getAllExtensions();
@@ -273,12 +325,12 @@ ipcMain.handle('sync:export', async (_event, profile: unknown) => {
   const result = mainWindow
     ? await dialog.showSaveDialog(mainWindow, {
         title: '同期データを保存',
-        defaultPath: 'zen-profile.json',
+        defaultPath: 'browser-el-profile.json',
         filters: [{ name: 'JSON', extensions: ['json'] }],
       })
     : await dialog.showSaveDialog({
         title: '同期データを保存',
-        defaultPath: 'zen-profile.json',
+        defaultPath: 'browser-el-profile.json',
         filters: [{ name: 'JSON', extensions: ['json'] }],
       });
 

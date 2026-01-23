@@ -2,7 +2,9 @@ import { BookmarkManager } from "./bookmarks";
 import { ExtensionsManager } from "./extensions";
 import { HistoryManager } from "./history";
 import { PanelManager } from "./panels";
+
 import { Space, SpaceManager } from "./spaces";
+import { TabManager } from "./tabs";
 
 export type SearchEngine = "google" | "duckduckgo" | "bing" | "custom";
 export type Theme = "liquid" | "classic";
@@ -19,6 +21,7 @@ export interface Settings {
   theme: Theme;
   liquidVariant: LiquidVariant;
   lastSyncAt?: string;
+  yellowMode: boolean;
 }
 
 export interface SyncProfile {
@@ -33,12 +36,13 @@ export interface SyncProfile {
   };
 }
 
-const SETTINGS_KEY = "zen-settings";
+const SETTINGS_KEY = "browser-el-settings";
 const DEFAULT_SETTINGS: Settings = {
   searchEngine: "google",
   customSearchUrl: "",
   theme: "liquid",
   liquidVariant: "nature",
+  yellowMode: true,
 };
 
 export const loadSettings = (): Settings => {
@@ -67,11 +71,13 @@ export class SettingsPanel {
   private historyManager: HistoryManager;
   private spaceManager: SpaceManager;
   private extensionsManager: ExtensionsManager;
+  private tabManager: TabManager;
   private settings: Settings;
   private settingsBtn: HTMLButtonElement;
   private searchEngineSelect: HTMLSelectElement;
   private themeSelect: HTMLSelectElement;
   private variantSelect: HTMLSelectElement;
+  private yellowModeCheckbox: HTMLInputElement;
   private customSearchRow: HTMLElement;
   private variantRow: HTMLElement;
   private customSearchInput: HTMLInputElement;
@@ -85,12 +91,14 @@ export class SettingsPanel {
     historyManager: HistoryManager,
     spaceManager: SpaceManager,
     extensionsManager: ExtensionsManager,
+    tabManager: TabManager,
   ) {
     this.panelManager = panelManager;
     this.bookmarkManager = bookmarkManager;
     this.historyManager = historyManager;
     this.spaceManager = spaceManager;
     this.extensionsManager = extensionsManager;
+    this.tabManager = tabManager;
     this.settingsBtn = document.getElementById(
       "settings-btn",
     ) as HTMLButtonElement;
@@ -103,6 +111,9 @@ export class SettingsPanel {
     this.variantSelect = document.getElementById(
       "settings-variant",
     ) as HTMLSelectElement;
+    this.yellowModeCheckbox = document.getElementById(
+      "settings-yellow-mode",
+    ) as HTMLInputElement; // Initialize checkbox
     this.customSearchRow = document.getElementById(
       "settings-custom-row",
     ) as HTMLElement;
@@ -121,13 +132,19 @@ export class SettingsPanel {
     this.syncStatus = document.getElementById("sync-status") as HTMLElement;
 
     this.settings = loadSettings();
-    this.applySettingsToUI();
+    try {
+      this.applySettingsToUI();
+    } catch (error) {
+      console.error("Failed to apply settings to UI:", error);
+    }
     this.setupEventListeners();
   }
 
   private setupEventListeners(): void {
     this.settingsBtn.addEventListener("click", async () => {
       this.panelManager.toggle("settings");
+      this.settings = loadSettings();
+      this.applySettingsToUI();
       await this.extensionsManager.refresh();
     });
 
@@ -160,6 +177,15 @@ export class SettingsPanel {
       this.saveAndApplySettings();
     });
 
+    if (this.yellowModeCheckbox) {
+      this.yellowModeCheckbox.addEventListener("change", () => {
+        this.settings.yellowMode = this.yellowModeCheckbox.checked;
+        this.saveAndApplySettings();
+        // Apply immediate effect
+        this.tabManager.setYellowMode(this.settings.yellowMode);
+      });
+    }
+
     this.syncExportBtn.addEventListener("click", async () => {
       await this.exportProfile();
     });
@@ -178,6 +204,9 @@ export class SettingsPanel {
     this.searchEngineSelect.value = this.settings.searchEngine;
     this.themeSelect.value = this.settings.theme;
     this.variantSelect.value = this.settings.liquidVariant;
+    if (this.yellowModeCheckbox) {
+      this.yellowModeCheckbox.checked = this.settings.yellowMode;
+    }
 
     this.customSearchInput.value = this.settings.customSearchUrl || "";
     this.customSearchRow.style.display =

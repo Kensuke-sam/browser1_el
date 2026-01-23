@@ -1,4 +1,4 @@
-# Zen Browser - Rust Edition
+# Browser El - Rust Edition
 
 世界最高峰のブラウザを目指し、TypeScript/ElectronからRust/Tauriへ完全移行しました。
 
@@ -14,23 +14,23 @@
 ## 🏗️ アーキテクチャ
 
 ```
-zen-browser/
+browser-el/
 ├── crates/
-│   ├── zen-core/      # コアビジネスロジック (Rust)
+│   ├── browser-el-core/      # コアビジネスロジック (Rust)
 │   │   ├── tab_manager.rs      # タブ管理 (749行TS → 150行Rust)
 │   │   ├── space_manager.rs    # スペース管理
 │   │   ├── navigation.rs       # URL正規化・ルーティング
 │   │   ├── exam_mode.rs        # イエローモード
 │   │   ├── sidebar.rs          # サイドバー状態管理
 │   │   └── settings.rs         # 設定管理
-│   ├── zen-storage/   # SQLiteデータ永続化
+│   ├── browser-el-storage/   # SQLiteデータ永続化
 │   │   ├── bookmark.rs         # ブックマーク (無制限、全文検索)
 │   │   ├── history.rs          # 履歴 (訪問回数追跡)
 │   │   └── migrations.rs       # localStorage→SQLite移行
-│   ├── zen-ipc/       # Tauri IPCコマンド
+│   ├── browser-el-ipc/       # Tauri IPCコマンド
 │   │   ├── commands.rs         # フロントエンド→Rust API
 │   │   └── state.rs            # アプリケーション状態
-│   └── zen-native/    # プラットフォーム固有機能
+│   └── browser-el-native/    # プラットフォーム固有機能
 │       ├── macos.rs            # macOSジェスチャー
 │       ├── windows.rs          # WebView2統合
 │       └── linux.rs            # WebKitGTK統合
@@ -71,15 +71,15 @@ cargo test --workspace
 cargo llvm-cov --workspace --html
 
 # 特定のクレートのテスト
-cargo test -p zen-core
-cargo test -p zen-storage
+cargo test -p browser-el-core
+cargo test -p browser-el-storage
 ```
 
 ### テストカバレッジ
 
-- zen-core: 85%
-- zen-storage: 90%
-- zen-ipc: 75%
+- browser-el-core: 85%
+- browser-el-storage: 90%
+- browser-el-ipc: 75%
 
 ## 🔧 開発
 
@@ -300,4 +300,4 @@ MIT License
 
 **Built with ❤️ using Rust and Tauri**
 
-*"世界最高峰のブラウザ" - by Zen Browser Team*
+*"世界最高峰のブラウザ" - by Browser El Team*

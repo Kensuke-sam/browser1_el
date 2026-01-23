@@ -1,0 +1,14 @@
+[package]
+name = "browser-el-ipc"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tauri = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+parking_lot = { workspace = true }
+anyhow = { workspace = true }
+
+browser-el-core = { path = "../browser-el-core" }
+browser-el-storage = { path = "../browser-el-storage" }

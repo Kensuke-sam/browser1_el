@@ -1,19 +1,19 @@
-# Zen Browser - Rust移行プロジェクトサマリー
+# Browser El - Rust移行プロジェクトサマリー
 
 ## ✅ 完成したもの (Week 1-2: 基盤構築)
 
 ### Cargoワークスペース
 - ✅ ワークスペースCargo.toml (最適化設定込み)
 - ✅ 4つのクレート:
-  - `zen-core` - コアビジネスロジック
-  - `zen-storage` - SQLiteデータ永続化
-  - `zen-ipc` - Tauri IPCコマンド
-  - `zen-native` - プラットフォーム固有機能
+  - `browser-el-core` - コアビジネスロジック
+  - `browser-el-storage` - SQLiteデータ永続化
+  - `browser-el-ipc` - Tauri IPCコマンド
+  - `browser-el-native` - プラットフォーム固有機能
 - ✅ src-tauri - Tauriアプリケーション本体
 
 ### Rustコード実装
 
-#### zen-core (コアロジック)
+#### browser-el-core (コアロジック)
 - ✅ `tab_manager.rs` (150行) - タブ管理、完全なテスト付き
 - ✅ `space_manager.rs` (130行) - スペース管理、デフォルトスペース3つ
 - ✅ `navigation.rs` (70行) - URL正規化、検索エンジンルーティング
@@ -21,12 +21,12 @@
 - ✅ `sidebar.rs` (50行) - サイドバー状態管理
 - ✅ `settings.rs` (40行) - 設定管理
 
-#### zen-storage (データ永続化)
+#### browser-el-storage (データ永続化)
 - ✅ `bookmark.rs` (110行) - ブックマーク CRUD + 全文検索
 - ✅ `history.rs` (120行) - 履歴管理 + 訪問回数追跡
 - ✅ `migrations.rs` (70行) - localStorage→SQLite移行ロジック
 
-#### zen-ipc (Tauriコマンド)
+#### browser-el-ipc (Tauriコマンド)
 - ✅ `state.rs` - アプリケーション状態管理 (RwLock)
 - ✅ `commands.rs` (200行) - 25個のTauriコマンド実装:
   - タブ: create, close, activate, get_all, get_by_space

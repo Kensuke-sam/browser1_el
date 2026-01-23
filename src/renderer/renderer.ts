@@ -50,6 +50,7 @@ class ZenBrowser {
       this.historyManager,
       this.spaceManager,
       this.extensionsManager,
+      this.tabManager,
     );
 
     // 初期タブを作成
@@ -57,7 +58,7 @@ class ZenBrowser {
       this.tabManager.createTab('', this.spaceManager.getActiveSpaceId());
     }
 
-    console.log('Zen Browser initialized');
+    console.log('Browser El initialized');
   }
 
   // タブマネージャーを取得

@@ -1,7 +1,7 @@
 {
-  "productName": "Zen Browser",
+  "productName": "Browser El",
   "version": "1.0.0",
-  "identifier": "com.zen.browser",
+  "identifier": "com.browserel.app",
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "",
@@ -22,7 +22,7 @@
   "app": {
     "windows": [
       {
-        "title": "Zen Browser",
+        "title": "Browser El",
         "width": 1200,
         "height": 800,
         "minWidth": 800,

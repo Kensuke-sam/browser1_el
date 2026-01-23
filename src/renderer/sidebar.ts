@@ -115,21 +115,21 @@ export class SidebarManager {
 
   // 状態を保存
   private saveState(): void {
-    localStorage.setItem('zen-sidebar-compact', String(this.isCompact));
-    localStorage.setItem('zen-sidebar-hidden', String(this.isHidden));
+    localStorage.setItem('browser-el-sidebar-compact', String(this.isCompact));
+    localStorage.setItem('browser-el-sidebar-hidden', String(this.isHidden));
   }
 
   // 状態を読み込み
   private loadState(): void {
     this.applyStoredWidth();
 
-    const compact = localStorage.getItem('zen-sidebar-compact');
+    const compact = localStorage.getItem('browser-el-sidebar-compact');
     if (compact === 'true') {
       this.isCompact = true;
       this.sidebar.classList.add('compact');
     }
 
-    const hidden = localStorage.getItem('zen-sidebar-hidden');
+    const hidden = localStorage.getItem('browser-el-sidebar-hidden');
     if (hidden === 'true') {
       this.isHidden = true;
       this.sidebar.classList.add('hidden');
@@ -203,7 +203,7 @@ export class SidebarManager {
   }
 
   private applyStoredWidth(): void {
-    const storedWidth = localStorage.getItem('zen-sidebar-width');
+    const storedWidth = localStorage.getItem('browser-el-sidebar-width');
     if (!storedWidth) {
       return;
     }
@@ -219,7 +219,7 @@ export class SidebarManager {
   private setSidebarWidth(width: number, persist: boolean = true): void {
     document.documentElement.style.setProperty('--sidebar-width', `${Math.round(width)}px`);
     if (persist) {
-      localStorage.setItem('zen-sidebar-width', String(Math.round(width)));
+      localStorage.setItem('browser-el-sidebar-width', String(Math.round(width)));
     }
   }
 

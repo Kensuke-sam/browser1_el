@@ -2,7 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use tauri::Manager;
-use zen_ipc::{AppState, commands};
+use browser_el_ipc::{AppState, commands};
 
 fn main() {
 
@@ -50,7 +50,7 @@ fn main() {
 
             std::fs::create_dir_all(&app_data_dir).expect("Failed to create app data directory");
 
-            let db_path = app_data_dir.join("zen-browser.db");
+            let db_path = app_data_dir.join("browser-el.db");
             let db_path_str = db_path.to_str().expect("Invalid DB path");
 
             // Initialize application state

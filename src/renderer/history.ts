@@ -49,6 +49,11 @@ export class HistoryManager {
   private setupEventListeners(): void {
     this.historyBtn.addEventListener('click', () => {
       this.panelManager.toggle('history');
+      // Clear search when opening the panel
+      if (this.panelManager.getActivePanel() === 'history') {
+        this.searchInput.value = '';
+        this.searchTerm = '';
+      }
       this.render();
     });
 
@@ -138,13 +143,14 @@ export class HistoryManager {
   private render(): void {
     const filtered = this.filterHistory();
     this.listElement.innerHTML = '';
+    
+    // Always hide empty element first, then show if needed
+    this.emptyElement.style.display = 'none';
 
     if (filtered.length === 0) {
       this.emptyElement.style.display = 'block';
       return;
     }
-
-    this.emptyElement.style.display = 'none';
     filtered.forEach((entry) => {
       const item = document.createElement('div');
       item.className = 'panel-item';

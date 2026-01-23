@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     maximize: () => ipcRenderer.invoke('window:maximize'),
     close: () => ipcRenderer.invoke('window:close'),
     isMaximized: () => ipcRenderer.invoke('window:isMaximized'),
+    enterFullscreen: () => ipcRenderer.invoke('fullscreen:enter'),
+    leaveFullscreen: () => ipcRenderer.invoke('fullscreen:leave'),
   },
   navigation: {
     onGesture: (callback: (direction: 'back' | 'forward') => void) => {
@@ -47,6 +49,8 @@ export interface ElectronAPI {
     maximize: () => Promise<void>;
     close: () => Promise<void>;
     isMaximized: () => Promise<boolean>;
+    enterFullscreen: () => Promise<void>;
+    leaveFullscreen: () => Promise<void>;
   };
   navigation: {
     onGesture: (callback: (direction: 'back' | 'forward') => void) => void;

@@ -1,4 +1,4 @@
-# Zen Browser - クイックスタートガイド
+# Browser El - クイックスタートガイド
 
 ## 🚀 5分で始める
 
@@ -31,19 +31,19 @@ cd ..
 cargo tauri dev
 ```
 
-これで Zen Browser が起動します! 🎉
+これで Browser El が起動します! 🎉
 
 ---
 
 ## 📁 プロジェクト構造
 
 ```
-zen-browser/
+browser-el/
 ├── crates/           # Rustコード
-│   ├── zen-core/    # タブ、スペース、ナビゲーション管理
-│   ├── zen-storage/ # SQLite ブックマーク・履歴
-│   ├── zen-ipc/     # Tauri コマンド (API)
-│   └── zen-native/  # macOS/Windows/Linux 固有機能
+│   ├── browser-el-core/    # タブ、スペース、ナビゲーション管理
+│   ├── browser-el-storage/ # SQLite ブックマーク・履歴
+│   ├── browser-el-ipc/     # Tauri コマンド (API)
+│   └── browser-el-native/  # macOS/Windows/Linux 固有機能
 ├── src-tauri/       # Tauri アプリ本体
 ├── frontend/        # Web UI (HTML/CSS/TypeScript)
 └── Cargo.toml      # Rustワークスペース設定
@@ -146,4 +146,4 @@ npm run dev
 
 ---
 
-**質問がある場合は、[GitHub Issues](https://github.com/zen-browser/zen-browser/issues) へどうぞ!**
+**質問がある場合は、[GitHub Issues](https://github.com/browser-el/browser-el/issues) へどうぞ!**

@@ -1,8 +1,8 @@
 [package]
-name = "zen-browser"
+name = "browser-el"
 version = "1.0.0"
 description = "A world-class browser built with Rust and Tauri"
-authors = ["Zen Browser Team"]
+authors = ["Browser El Team"]
 edition = "2021"
 
 [build-dependencies]
@@ -16,10 +16,10 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 parking_lot = { workspace = true }
 
-zen-core = { path = "../crates/zen-core" }
-zen-ipc = { path = "../crates/zen-ipc" }
-zen-storage = { path = "../crates/zen-storage" }
-zen-native = { path = "../crates/zen-native" }
+browser-el-core = { path = "../crates/browser-el-core" }
+browser-el-ipc = { path = "../crates/browser-el-ipc" }
+browser-el-storage = { path = "../crates/browser-el-storage" }
+browser-el-native = { path = "../crates/browser-el-native" }
 
 [features]
 default = ["custom-protocol"]

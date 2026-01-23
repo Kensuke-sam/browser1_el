@@ -11,6 +11,7 @@ export class SplitViewManager {
   private refreshScheduled: boolean = false;
   private isResizing: boolean = false;
   private paneObserver: MutationObserver | null = null;
+  private readonly wrapperPrefix = 'webview-wrapper-';
 
   constructor(tabManager: TabManager) {
     this.tabManager = tabManager;
@@ -59,33 +60,51 @@ export class SplitViewManager {
     });
   }
 
+  private enableSplitView(): void {
+    if (this.isSplitView) {
+      return;
+    }
+    this.isSplitView = true;
+    this.webviewContainer.classList.add('split-view');
+    this.splitViewBtn.classList.add('active');
+    this.updateSplitViewIcon();
+    this.resetSplitView();
+    this.syncPaneVisibility();
+  }
+
+  private disableSplitView(): void {
+    if (!this.isSplitView) {
+      return;
+    }
+    this.isSplitView = false;
+    this.webviewContainer.classList.remove('split-view');
+    this.splitViewBtn.classList.remove('active');
+    this.resetSplitView();
+    this.clearResizeHandles();
+    this.resetPaneSizes();
+    this.syncPaneVisibility();
+  }
+
   // 分割ビューを切り替え
   toggleSplitView(): void {
-    this.isSplitView = !this.isSplitView;
-    this.webviewContainer.classList.toggle('split-view', this.isSplitView);
-    this.splitViewBtn.classList.toggle('active', this.isSplitView);
-    
     if (this.isSplitView) {
-      this.updateSplitViewIcon();
-      
-      // アクティブなタブと次のタブを追加
-      this.resetSplitView();
-      const activeTab = this.tabManager.getActiveTab();
-      if (activeTab) {
-        this.addPane(activeTab.id);
-        
-        // 同じスペースの他のタブを探す
-        // TODO: TabManagerから取得するメソッドがあると良いが、ここではDOM構造に依存せずに実装
-        // TabManagerに公開メソッドを追加するのが本来は望ましい
-        // 簡易的に実装：すでにDOMにあるタブ要素から探す、またはTabManagerの実装詳細を知っている前提
-      }
-
-      this.scheduleHandleRefresh();
-    } else {
-      this.resetSplitView();
-      this.clearResizeHandles();
-      this.resetPaneSizes();
+      this.disableSplitView();
+      return;
     }
+
+    this.enableSplitView();
+
+    // アクティブなタブと次のタブを追加
+    const activeTab = this.tabManager.getActiveTab();
+    if (activeTab) {
+      this.addPane(activeTab.id);
+      const nextTabId = this.getNextPaneCandidate(activeTab.id, activeTab.spaceId);
+      if (nextTabId) {
+        this.addPane(nextTabId);
+      }
+    }
+
+    this.scheduleHandleRefresh();
   }
 
   // 分割ビューアイコンを更新
@@ -101,21 +120,18 @@ export class SplitViewManager {
   // 分割ビューをリセット
   private resetSplitView(): void {
     this.splitPanes = [];
+    this.syncPaneVisibility();
   }
 
   // ペインを追加
   addPane(tabId: string): void {
     if (!this.isSplitView) {
-      this.toggleSplitView();
+      this.enableSplitView();
     }
     
     if (!this.splitPanes.includes(tabId)) {
       this.splitPanes.push(tabId);
-      
-      const wrapper = document.getElementById(`webview-wrapper-${tabId}`);
-      if (wrapper) {
-        wrapper.classList.add('active');
-      }
+      this.syncPaneVisibility();
       this.scheduleHandleRefresh();
     }
   }
@@ -125,15 +141,11 @@ export class SplitViewManager {
     const index = this.splitPanes.indexOf(tabId);
     if (index > -1) {
       this.splitPanes.splice(index, 1);
-      
-      const wrapper = document.getElementById(`webview-wrapper-${tabId}`);
-      if (wrapper) {
-        wrapper.classList.remove('active');
-      }
+      this.syncPaneVisibility();
       
       // ペインが1つ以下になったら分割ビューを終了
       if (this.splitPanes.length <= 1) {
-        this.toggleSplitView();
+        this.disableSplitView();
       } else {
         this.scheduleHandleRefresh();
       }
@@ -167,6 +179,7 @@ export class SplitViewManager {
       return;
     }
 
+    this.syncPaneVisibility();
     const panes = this.getVisibleWrappers();
     if (panes.length <= 1) {
       return;
@@ -187,8 +200,53 @@ export class SplitViewManager {
 
   private getVisibleWrappers(): HTMLElement[] {
     return Array.from(
-      this.webviewContainer.querySelectorAll<HTMLElement>('.webview-wrapper'),
+      this.webviewContainer.querySelectorAll<HTMLElement>('.webview-wrapper.split-pane'),
     ).filter((wrapper) => wrapper.style.display !== 'none');
+  }
+
+  private getTabIdFromWrapper(wrapper: HTMLElement): string | null {
+    if (!wrapper.id.startsWith(this.wrapperPrefix)) {
+      return null;
+    }
+    return wrapper.id.slice(this.wrapperPrefix.length);
+  }
+
+  private syncPaneVisibility(): void {
+    const wrappers = Array.from(
+      this.webviewContainer.querySelectorAll<HTMLElement>('.webview-wrapper'),
+    );
+    const wrapperIds = new Set<string>();
+    const activeSpaceId = this.tabManager.getActiveSpaceId();
+
+    wrappers.forEach((wrapper) => {
+      const tabId = this.getTabIdFromWrapper(wrapper);
+      if (!tabId) {
+        return;
+      }
+      wrapperIds.add(tabId);
+      const shouldShow =
+        this.isSplitView &&
+        this.splitPanes.includes(tabId) &&
+        wrapper.dataset.spaceId === activeSpaceId;
+      wrapper.classList.toggle('split-pane', shouldShow);
+    });
+
+    this.splitPanes = this.splitPanes.filter((tabId) => wrapperIds.has(tabId));
+  }
+
+  private getNextPaneCandidate(activeTabId: string, spaceId: string): string | null {
+    const tabIds = this.tabManager.getTabIdsForSpace(spaceId);
+    if (tabIds.length <= 1) {
+      return null;
+    }
+
+    const currentIndex = tabIds.indexOf(activeTabId);
+    const nextId = currentIndex >= 0 ? tabIds[currentIndex + 1] : tabIds[0];
+    if (nextId) {
+      return nextId;
+    }
+
+    return currentIndex > 0 ? tabIds[currentIndex - 1] : null;
   }
 
   private positionResizeHandles(): void {

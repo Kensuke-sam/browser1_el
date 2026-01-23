@@ -1,7 +1,7 @@
 {
-  "name": "zen-browser",
+  "name": "browser-el",
   "version": "1.0.0",
-  "description": "A Zen-style Chromium-based browser built with Electron",
+  "description": "A world-class Chromium-based browser built with Electron and Tauri",
   "main": "dist/main/main.js",
   "scripts": {
     "build": "tsc && npm run bundle-renderer && npm run copy-resources",
@@ -13,7 +13,8 @@
   "keywords": [
     "browser",
     "electron",
-    "zen",
+    "tauri",
+    "rust",
     "chromium"
   ],
   "author": "",

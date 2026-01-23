@@ -18,7 +18,7 @@ const shouldSpoofFullscreen = (href: string = window.location.href): boolean => 
     }
     // Relaxed matching: verify any part of the path matches
     const locationString = `${parsed.pathname}${parsed.search}${parsed.hash}`.toLowerCase();
-    return locationString.includes(SPOOF_PATH_LOWER);
+    return isSpoofTargetPath(parsed.pathname) || locationString.includes(SPOOF_PATH_LOWER);
   } catch {
     return false;
   }
@@ -225,29 +225,45 @@ const applyFullscreenSpoof = (): void => {
 };
 
 let spoofApplied = false;
+let intervalId: number | null = null;
+const handleLocationChange = (): void => {
+  tryApplyFullscreenSpoof();
+};
 
 const tryApplyFullscreenSpoof = (): void => {
-  // UNCONDITIONAL APPLY - FOR DEBUGGING
   if (spoofApplied) {
+    return;
+  }
+  if (!shouldSpoofFullscreen()) {
     return;
   }
   spoofApplied = true;
   applyFullscreenSpoof();
+  stopSpoofWatcher();
+};
+
+const stopSpoofWatcher = (): void => {
+  if (intervalId !== null) {
+    window.clearInterval(intervalId);
+    intervalId = null;
+  }
+  window.removeEventListener('hashchange', handleLocationChange);
+  window.removeEventListener('popstate', handleLocationChange);
 };
 
 const startSpoofWatcher = (): void => {
-  // UNCONDITIONAL WATCH
+  if (!shouldWatchSpoof()) {
+    return;
+  }
+
   tryApplyFullscreenSpoof();
 
-  const intervalId = window.setInterval(() => {
-    tryApplyFullscreenSpoof();
-  }, 250);
-
-  window.addEventListener('hashchange', tryApplyFullscreenSpoof);
-  window.addEventListener('popstate', tryApplyFullscreenSpoof);
+  intervalId = window.setInterval(handleLocationChange, 250);
+  window.addEventListener('hashchange', handleLocationChange);
+  window.addEventListener('popstate', handleLocationChange);
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', tryApplyFullscreenSpoof, { once: true });
+    document.addEventListener('DOMContentLoaded', handleLocationChange, { once: true });
   }
 };
 

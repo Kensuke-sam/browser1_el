@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja" data-theme="liquid" data-variant="liquid">
+<html lang="ja" data-theme="zen" data-variant="default">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,18 +12,31 @@
         try {
           const stored = localStorage.getItem("zen-settings");
           if (!stored) {
-            // Default to liquid if nothing stored
-            document.documentElement.dataset.theme = "liquid";
-            document.documentElement.dataset.variant = "liquid";
+            // Default to zen dark theme
+            document.documentElement.dataset.theme = "zen";
+            document.documentElement.dataset.variant = "default";
             return;
           }
           const parsed = JSON.parse(stored);
           const theme = parsed?.theme;
-          if (theme === "classic" || theme === "liquid") {
+          const variant = parsed?.variant;
+          if (theme) {
             document.documentElement.dataset.theme = theme;
+          }
+          if (variant) {
+            document.documentElement.dataset.variant = variant;
+          }
+          if (variant) {
+            document.documentElement.dataset.variant = variant;
           }
         } catch {}
       })();
+      window.onerror = function(message, source, lineno, colno, error) {
+        console.error('Global Error caught:', message, source, lineno, colno, error);
+      };
+      window.onunhandledrejection = function(event) {
+        console.error('Unhandled Rejection:', event.reason);
+      };
     </script>
     <title>Zen Browser</title>
     <link rel="stylesheet" href="../styles/main.css" />
@@ -352,25 +365,21 @@
               </select>
             </div>
             <div class="settings-field">
-              <label for="settings-theme">テーマ</label>
-              <select id="settings-theme" class="settings-select">
-                <option value="liquid">リキッドグラス</option>
-                <option value="classic">クラシック (ダーク)</option>
+              <label for="settings-theme">アクセントカラー</label>
+              <select id="settings-variant" class="settings-select">
+                <option value="default">パープル (デフォルト)</option>
+                <option value="ocean">オーシャン (ブルー)</option>
+                <option value="sunset">サンセット (オレンジ)</option>
+                <option value="rose">ローズ (ピンク)</option>
+                <option value="emerald">エメラルド (グリーン)</option>
+                <option value="midnight">ミッドナイト (ダーク)</option>
               </select>
             </div>
-            <div
-              class="settings-field"
-              id="settings-variant-row"
-              style="display: none"
-            >
-              <label for="settings-variant">テーマバリエーション</label>
-              <select id="settings-variant" class="settings-select">
-                <option value="nature">Nature (Green)</option>
-                <option value="ocean">Ocean (Blue)</option>
-                <option value="sunset">Sunset (Warm)</option>
-                <option value="frost">Frost (Light)</option>
-                <option value="midnight">Midnight (Dark Glass)</option>
-              </select>
+            <div class="settings-field">
+              <label for="settings-yellow-mode" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                <span>イエローモード (試験用)</span>
+                <input type="checkbox" id="settings-yellow-mode" style="width: auto;" />
+              </label>
             </div>
             <div class="settings-field" id="settings-custom-row">
               <label for="settings-custom-search">カスタム検索URL</label>

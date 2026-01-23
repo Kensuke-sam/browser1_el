@@ -8,7 +8,7 @@ export interface Bookmark {
   createdAt: number;
 }
 
-const BOOKMARKS_KEY = 'zen-bookmarks';
+const BOOKMARKS_KEY = 'browser-el-bookmarks';
 
 export class BookmarkManager {
   private tabManager: TabManager;
